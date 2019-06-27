@@ -33,6 +33,7 @@ pipeline{
             }
         }
         stage('package'){
+            when { branch "master"}
             agent{
               docker{
                image 'maven:3.6.1-jdk-8-slim'
@@ -48,6 +49,7 @@ pipeline{
             }
         }
         stage('docker-package'){
+            when { branch "master"}
             agent any
             steps{
               echo 'Packaging worker app with docker'
@@ -58,6 +60,14 @@ pipeline{
                     workerImage.push("latest")
                 }
               }
+            }
+        }
+        stage('deploy'){
+            when { branch "master"}
+            agent any
+            steps{
+              echo 'Deploy with Docker Compose'
+              sh 'docker-compose up -d'
             }
         }
     }
